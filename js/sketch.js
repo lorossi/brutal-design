@@ -24,6 +24,7 @@ class Sketch extends Engine {
     this.ctx.save();
     this.background(this._palette.background);
     this.ctx.translate(this.width / 2, this.height / 2);
+    this.ctx.rotate(Math.floor(Math.random() * 4) * (Math.PI / 2));
     this.ctx.scale(this._scl, this._scl);
     this.ctx.translate(-this.width / 2, -this.height / 2);
     this._partition.show(this.ctx);
@@ -44,15 +45,15 @@ class Sketch extends Engine {
     const ctx = this._texture.getContext("2d");
     const noise = new SimplexNoise();
     noise.setDetail(5, 0.25);
-    const n_scl = 0.01;
+    const n_scl = 0.02;
     const scl = 2;
 
     // draw background
     for (let x = 0; x < this.width; x += scl) {
       for (let y = 0; y < this.height; y += scl) {
         const n = noise.noise(x * n_scl, y * n_scl);
-        const c = Math.floor((64 * (n + 1)) / 2);
-        ctx.fillStyle = `rgba(${c}, ${c}, ${c}, 0.1)`;
+        const c = Math.floor((32 * (n + 1)) / 2);
+        ctx.fillStyle = `rgba(${c}, ${c}, ${c}, 0.14)`;
         ctx.fillRect(x, y, scl, scl);
       }
     }
@@ -71,27 +72,45 @@ class Sketch extends Engine {
     this.ctx.restore();
   }
 
-  _drawText(biggest) {
+  _drawText(partition) {
     this.ctx.save();
 
-    const height = Math.floor(biggest.size / 10);
+    const title = "BRUTAL DESIGN";
+    const subtitle = "soon next to you";
+
+    const title_height = Math.floor(partition.size / 10);
+    const subtitle_height = Math.floor(title_height * 0.3);
+
+    const replicas = Math.floor(Math.random() * 3 + 4);
 
     this.ctx.fillStyle = this._palette.background;
-    this.ctx.font = `bold ${height}px ${this._font}`;
-    this.ctx.textAlign = "left";
-    this.ctx.textBaseline = "top";
+    this.ctx.font = `bold ${title_height}px ${this._font}`;
 
-    const text = "BRUTAL DESIGN";
-
-    this.ctx.translate(biggest.border * 2, biggest.border * 2);
-
-    const replicas = 5;
+    // draw title
+    this.ctx.save();
+    this.ctx.translate(partition.border * 2, partition.border * 2);
     for (let i = 0; i < replicas; i++) {
       this.ctx.save();
-      this.ctx.translate(0, i * height * 0.85);
-      this.ctx.fillText(text, biggest.x, biggest.y);
+      this.ctx.textAlign = "left";
+      this.ctx.textBaseline = "top";
+      this.ctx.translate(0, i * title_height * 0.85);
+      this.ctx.fillText(title, partition.x, partition.y);
       this.ctx.restore();
     }
+    this.ctx.restore();
+
+    // draw subtitle
+    this.ctx.save();
+    this.ctx.font = `bold ${subtitle_height}px ${this._font}`;
+    this.ctx.textAlign = "right";
+    this.ctx.textBaseline = "bottom";
+    this.ctx.translate(
+      partition.x + partition.size - partition.border * 2,
+      partition.y + partition.size - partition.border * 2
+    );
+
+    this.ctx.fillText(subtitle, 0, 0);
+    this.ctx.restore();
 
     this.ctx.restore();
   }
