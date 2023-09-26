@@ -137,6 +137,14 @@ class Sketch extends Engine {
     this.setup();
     this.draw();
   }
+
+  keyPress(_, c) {
+    if (c == 13) {
+      const timestamp = new Date().getTime();
+      const filename = `brutal-design-${timestamp}.png`;
+      this.saveFrame(filename);
+    }
+  }
 }
 
 export { Sketch };
