@@ -40,22 +40,25 @@ class Sketch extends Engine {
   }
 
   _createTexture() {
-    this._texture = document.createElement("canvas");
-    this._texture.width = this.width;
-    this._texture.height = this.height;
+    this._dark_texture = document.createElement("canvas");
+    this._dark_texture.width = this.width;
+    this._dark_texture.height = this.height;
 
-    const ctx = this._texture.getContext("2d");
+    const ctx = this._dark_texture.getContext("2d");
     const noise = new SimplexNoise();
-    noise.setDetail(5, 0.25);
-    const n_scl = 0.02;
+    noise.setDetail(3, 0.75);
+    const n_scl = 0.0125;
     const scl = 4;
 
     // draw background
     for (let x = 0; x < this.width; x += scl) {
       for (let y = 0; y < this.height; y += scl) {
         const n = noise.noise(x * n_scl, y * n_scl);
-        const c = Math.floor((32 * (n + 1)) / 2);
-        ctx.fillStyle = `rgba(${c}, ${c}, ${c}, 0.14)`;
+
+        const t = (n + 1) / 2;
+        const c = Math.floor(t * 255);
+
+        ctx.fillStyle = `rgba(${c}, ${c}, ${c}, 0.01)`;
         ctx.fillRect(x, y, scl, scl);
       }
     }
@@ -63,13 +66,14 @@ class Sketch extends Engine {
 
   _addTexture() {
     this.ctx.save();
-    this.ctx.globalCompositeOperation = "lighter";
-
     this.ctx.translate(this.width / 2, this.height / 2);
     this.ctx.rotate(Math.floor(Math.random() * 4) * (Math.PI / 2));
     this.ctx.translate(-this.width / 2, -this.height / 2);
 
-    this.ctx.drawImage(this._texture, 0, 0);
+    this.ctx.save();
+    this.ctx.globalCompositeOperation = "lighter";
+    this.ctx.drawImage(this._dark_texture, 0, 0);
+    this.ctx.restore();
 
     this.ctx.restore();
   }
@@ -85,32 +89,38 @@ class Sketch extends Engine {
 
     const replicas = Math.floor(Math.random() * 3 + 4);
 
-    this.ctx.fillStyle = this._palette.background;
-    this.ctx.font = `bold ${title_height}px ${this._font}`;
-
     // draw title
     this.ctx.save();
-    this.ctx.translate(partition.border * 2, partition.border * 2);
+    this.ctx.translate(partition.border * 4, partition.border * 4);
+
+    this.ctx.fillStyle = this._palette.background;
+    this.ctx.strokeStyle = this._palette.background;
+    this.ctx.font = `bold ${title_height}px ${this._font}`;
 
     for (let i = 0; i < replicas; i++) {
       this.ctx.save();
       this.ctx.textAlign = "left";
       this.ctx.textBaseline = "top";
-      this.ctx.translate(0, i * title_height * 0.85);
+      this.ctx.translate(0, i * title_height * 0.25);
       this.ctx.rotate(partition.rotation);
-      this.ctx.fillText(title, partition.x, partition.y);
+
+      if (i == replicas - 1) this.ctx.fillText(title, partition.x, partition.y);
+      else this.ctx.strokeText(title, partition.x, partition.y);
+
       this.ctx.restore();
     }
+
     this.ctx.restore();
 
     // draw subtitle
     this.ctx.save();
+    this.ctx.fillStyle = this._palette.background;
     this.ctx.font = `bold ${subtitle_height}px ${this._font}`;
     this.ctx.textAlign = "right";
     this.ctx.textBaseline = "bottom";
     this.ctx.translate(
-      partition.x + partition.size - partition.border * 2,
-      partition.y + partition.size - partition.border * 2
+      partition.x + partition.size - partition.border * 4,
+      partition.y + partition.size - partition.border * 4
     );
     this.ctx.rotate(partition.rotation);
 

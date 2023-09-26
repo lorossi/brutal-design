@@ -9,7 +9,7 @@ class Partition {
     this._triangle_probability = 1 - probability;
     this._children = [];
     this._border = 8;
-    this._rotation = ((Math.random() * 2 - 1) * Math.PI) / 180;
+    this._rotation = ((Math.random() * 2 - 1) * Math.PI) / 360;
     this._cols = 2;
   }
 
