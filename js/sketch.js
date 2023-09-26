@@ -47,8 +47,8 @@ class Sketch extends Engine {
     const ctx = this._dark_texture.getContext("2d");
     const noise = new SimplexNoise();
     noise.setDetail(3, 0.75);
-    const n_scl = 0.0125;
-    const scl = 4;
+    const n_scl = 0.0124;
+    const scl = 5;
 
     // draw background
     for (let x = 0; x < this.width; x += scl) {
@@ -56,9 +56,9 @@ class Sketch extends Engine {
         const n = noise.noise(x * n_scl, y * n_scl);
 
         const t = (n + 1) / 2;
-        const c = Math.floor(t * 255);
+        const c = Math.floor(t * 64);
 
-        ctx.fillStyle = `rgba(${c}, ${c}, ${c}, 0.01)`;
+        ctx.fillStyle = `rgba(${c}, ${c}, ${c}, 0.05)`;
         ctx.fillRect(x, y, scl, scl);
       }
     }
@@ -71,7 +71,6 @@ class Sketch extends Engine {
     this.ctx.translate(-this.width / 2, -this.height / 2);
 
     this.ctx.save();
-    this.ctx.globalCompositeOperation = "lighter";
     this.ctx.drawImage(this._dark_texture, 0, 0);
     this.ctx.restore();
 
@@ -119,8 +118,8 @@ class Sketch extends Engine {
     this.ctx.textAlign = "right";
     this.ctx.textBaseline = "bottom";
     this.ctx.translate(
-      partition.x + partition.size - partition.border * 4,
-      partition.y + partition.size - partition.border * 4
+      partition.x + partition.size - partition.border * 2,
+      partition.y + partition.size - partition.border * 2
     );
     this.ctx.rotate(partition.rotation);
 
