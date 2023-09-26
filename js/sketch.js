@@ -1,6 +1,6 @@
 import { Engine, SimplexNoise } from "./engine.js";
 import { Partition } from "./partition.js";
-import { Palette, PaletteFactory } from "./palette.js";
+import { PaletteFactory } from "./palette.js";
 
 class Sketch extends Engine {
   preload() {
@@ -9,7 +9,6 @@ class Sketch extends Engine {
 
   setup() {
     this._palette = PaletteFactory.random();
-    console.log(this._palette);
     this._scl = 0.95;
     this._font = "VioletSans";
 
