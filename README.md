@@ -7,7 +7,7 @@
 This project is distributed under MIT license.
 I don't claim any rights over the external libraries and assets packaged inside the project.
 
-Texture by [Juhani Pelli](https://unsplash.com/photos/n2Zf3kdcTZA)
+Font [Violet Sans by Manfred Klein](http://moorstation.org/typoasis/designers/klein03/text/violetsans.htm) is packaged in this repository.
 
 Font [Roboto](https://fonts.google.com/specimen/Roboto), made by Google, is packaged in this repository.
 
