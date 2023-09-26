@@ -6,6 +6,7 @@ class Partition {
     this._probability = probability;
     this._level = level;
 
+    this._triangle_probability = 1 - probability;
     this._children = [];
     this._border = 8;
     this._rotation = ((Math.random() * 2 - 1) * Math.PI) / 180;
@@ -55,6 +56,7 @@ class Partition {
   _draw(ctx) {
     ctx.save();
 
+    // draw the dark background
     ctx.fillStyle = this._foreground;
     ctx.strokeStyle = this._background;
     ctx.lineWidth = this._border;
@@ -62,10 +64,28 @@ class Partition {
     ctx.translate(this._x + this._size / 2, this._y + this._size / 2);
     ctx.rotate(this._rotation);
 
-    ctx.beginPath();
-    ctx.rect(-this._size / 2, -this._size / 2, this._size, this._size);
-    ctx.fill();
-    ctx.stroke();
+    // random chance of being half filled if empty
+    if (
+      this._children.length == 0 &&
+      Math.random() > this._triangle_probability
+    ) {
+      ctx.beginPath();
+      ctx.rotate(Math.floor(Math.random() * 4) * (Math.PI / 2));
+
+      ctx.beginPath();
+      ctx.moveTo(-this._size / 2, -this._size / 2);
+      ctx.lineTo(this._size / 2, -this._size / 2);
+      ctx.lineTo(this._size / 2, this._size / 2);
+
+      ctx.fill();
+      ctx.stroke();
+    } else {
+      ctx.beginPath();
+      ctx.rect(-this._size / 2, -this._size / 2, this._size, this._size);
+      ctx.fill();
+      ctx.stroke();
+    }
+
     ctx.restore();
   }
 
@@ -105,6 +125,10 @@ class Partition {
 
   get border() {
     return this._border;
+  }
+
+  get rotation() {
+    return this._rotation;
   }
 }
 
