@@ -18,6 +18,7 @@ const PALETTES = [
   new Palette("#1e211e", "#dc0073"),
   new Palette("#1e211e", "#008bf8"),
   new Palette("#1e211e", "#deff0a"),
+  new Palette("#1e211e", "#08E8DE"),
 ];
 
 class PaletteFactory {
