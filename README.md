@@ -1,13 +1,19 @@
-# Empty HTML5 Canvas Project
+# Brutal Design
 
+![output-1](output/brutal-design-1695757928962.png)
 
+![output-2](output/brutal-design-1695757930298.png)
+
+![output-3](output/brutal-design-1695757931809.png)
+
+![output-4](output/brutal-design-1695757933745.png)
 
 ## Credits
 
 This project is distributed under MIT license.
 I don't claim any rights over the external libraries and assets packaged inside the project.
 
-Font [Violet Sans by Manfred Klein](http://moorstation.org/typoasis/designers/klein03/text/violetsans.htm) is packaged in this repository.
+Font [Violet Sans by Violet Office](https://violetoffice.com/work/violet-sans) is packaged in this repository.
 
 Font [Roboto](https://fonts.google.com/specimen/Roboto), made by Google, is packaged in this repository.
 
