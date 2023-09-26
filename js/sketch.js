@@ -23,6 +23,8 @@ class Sketch extends Engine {
   draw() {
     this.ctx.save();
     this.background(this._palette.background);
+    this._setPageBackground(this._palette.background);
+
     this.ctx.translate(this.width / 2, this.height / 2);
     this.ctx.rotate(Math.floor(Math.random() * 4) * (Math.PI / 2));
     this.ctx.scale(this._scl, this._scl);
@@ -46,7 +48,7 @@ class Sketch extends Engine {
     const noise = new SimplexNoise();
     noise.setDetail(5, 0.25);
     const n_scl = 0.02;
-    const scl = 2;
+    const scl = 4;
 
     // draw background
     for (let x = 0; x < this.width; x += scl) {
@@ -76,7 +78,7 @@ class Sketch extends Engine {
     this.ctx.save();
 
     const title = "BRUTAL DESIGN";
-    const subtitle = "soon next to you";
+    const subtitle = "soon next to you™";
 
     const title_height = Math.floor(partition.size / 10);
     const subtitle_height = Math.floor(title_height * 0.3);
@@ -89,11 +91,13 @@ class Sketch extends Engine {
     // draw title
     this.ctx.save();
     this.ctx.translate(partition.border * 2, partition.border * 2);
+
     for (let i = 0; i < replicas; i++) {
       this.ctx.save();
       this.ctx.textAlign = "left";
       this.ctx.textBaseline = "top";
       this.ctx.translate(0, i * title_height * 0.85);
+      this.ctx.rotate(partition.rotation);
       this.ctx.fillText(title, partition.x, partition.y);
       this.ctx.restore();
     }
@@ -108,11 +112,16 @@ class Sketch extends Engine {
       partition.x + partition.size - partition.border * 2,
       partition.y + partition.size - partition.border * 2
     );
+    this.ctx.rotate(partition.rotation);
 
     this.ctx.fillText(subtitle, 0, 0);
     this.ctx.restore();
 
     this.ctx.restore();
+  }
+
+  _setPageBackground(color) {
+    document.body.style.backgroundColor = color;
   }
 
   click() {
