@@ -1,12 +1,23 @@
 # Brutal Design
 
-![output-1](output/brutal-design-1695757928962.png)
+<p align="center">
+  <img width="400" height="400" src="/output/output-1.png">
+  <img width="400" height="400" src="/output/output-2.png">
+</p>
 
-![output-2](output/brutal-design-1695757930298.png)
+<p align="center">
+  <img width="400" height="400" src="/output/output-3.png">
+  <img width="400" height="400" src="/output/output-4.png">
+</p>
 
-![output-3](output/brutal-design-1695757931809.png)
+<p align="center">
+  <img width="400" height="400" src="/output/output-5.png">
+  <img width="400" height="400" src="/output/output-6.png">
+</p>
 
-![output-4](output/brutal-design-1695757933745.png)
+## Description
+
+This project is a procedural design generator. TODO
 
 ## Credits
 
