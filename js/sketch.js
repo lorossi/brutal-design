@@ -5,8 +5,8 @@ import { PaletteFactory } from "./palette.js";
 
 class Sketch extends Engine {
   setup() {
-    const timestamp = new Date().getTime();
-    this._random = new XOR128(timestamp);
+    this._timestamp = new Date().getTime();
+    this._random = new XOR128(this._timestamp);
     this._createTexture();
 
     this._palette = PaletteFactory.randomPalette(this._random);
@@ -88,7 +88,7 @@ class Sketch extends Engine {
     const title_height = Math.floor(partition.size / 10);
     const subtitle_height = Math.floor(title_height * 0.3);
 
-    const replicas = this._random.random_int(3, 7);
+    const replicas = this._random.random_int(4, 8);
 
     // draw title
     this.ctx.save();
@@ -141,10 +141,13 @@ class Sketch extends Engine {
   }
 
   keyPress(_, c) {
-    if (c == 13) {
-      const timestamp = new Date().getTime();
-      const filename = `brutal-design-${timestamp}.png`;
-      this.saveFrame(filename);
+    switch (c) {
+      case 13: // enter
+        const filename = `brutal-design-${this._timestamp}.png`;
+        this.saveFrame(filename);
+        break;
+      default:
+        break;
     }
   }
 }
