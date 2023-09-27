@@ -34,7 +34,7 @@ class Sketch extends Engine {
     this._drawText(biggest);
     this.ctx.restore();
 
-    this._addTexture();
+    this._drawTexture();
 
     this.noLoop();
   }
@@ -45,32 +45,28 @@ class Sketch extends Engine {
     this._dark_texture.height = this.height;
 
     const ctx = this._dark_texture.getContext("2d");
-    const noise = new SimplexNoise();
-    noise.setDetail(3, 0.75);
-    const n_scl = 0.0124;
-    const scl = 5;
+
+    const scl = 3;
 
     // draw background
     for (let x = 0; x < this.width; x += scl) {
       for (let y = 0; y < this.height; y += scl) {
-        const n = noise.noise(x * n_scl, y * n_scl);
+        const c = Math.floor(Math.random() * 64);
 
-        const t = (n + 1) / 2;
-        const c = Math.floor(t * 64);
-
-        ctx.fillStyle = `rgba(${c}, ${c}, ${c}, 0.05)`;
+        ctx.fillStyle = `rgba(${c}, ${c}, ${c}, 0.25)`;
         ctx.fillRect(x, y, scl, scl);
       }
     }
   }
 
-  _addTexture() {
+  _drawTexture() {
     this.ctx.save();
     this.ctx.translate(this.width / 2, this.height / 2);
     this.ctx.rotate(Math.floor(Math.random() * 4) * (Math.PI / 2));
     this.ctx.translate(-this.width / 2, -this.height / 2);
 
     this.ctx.save();
+    this.ctx.globalCompositeOperation = "darken";
     this.ctx.drawImage(this._dark_texture, 0, 0);
     this.ctx.restore();
 
