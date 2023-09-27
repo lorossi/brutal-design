@@ -1,18 +1,19 @@
-import { Engine, SimplexNoise } from "./engine.js";
+import { Engine } from "./engine.js";
+import { XOR128 } from "./xor128.js";
 import { Partition } from "./partition.js";
 import { PaletteFactory } from "./palette.js";
 
 class Sketch extends Engine {
-  preload() {
-    this._createTexture();
-  }
-
   setup() {
-    this._palette = PaletteFactory.random();
+    const timestamp = new Date().getTime();
+    this._random = new XOR128(timestamp);
+    this._createTexture();
+
+    this._palette = PaletteFactory.randomPalette(this._random);
     this._scl = 0.95;
     this._font = "VioletSans";
 
-    this._partition = new Partition(0, 0, this.width, 1);
+    this._partition = new Partition(0, 0, this.width, this._random);
     this._partition.setColors(
       this._palette.background,
       this._palette.foreground
@@ -26,7 +27,10 @@ class Sketch extends Engine {
     this._setPageBackground(this._palette.background);
 
     this.ctx.translate(this.width / 2, this.height / 2);
-    this.ctx.rotate(Math.floor(Math.random() * 4) * (Math.PI / 2));
+
+    const theta = this._random.random_int(4) * (Math.PI / 2);
+    this.ctx.rotate(theta);
+
     this.ctx.scale(this._scl, this._scl);
     this.ctx.translate(-this.width / 2, -this.height / 2);
     this._partition.show(this.ctx);
@@ -51,9 +55,8 @@ class Sketch extends Engine {
     // draw background
     for (let x = 0; x < this.width; x += scl) {
       for (let y = 0; y < this.height; y += scl) {
-        const c = Math.floor(Math.random() * 64);
-
-        ctx.fillStyle = `rgba(${c}, ${c}, ${c}, 0.25)`;
+        const c = this._random.random_int(127);
+        ctx.fillStyle = `rgba(${c}, ${c}, ${c}, 0.1)`;
         ctx.fillRect(x, y, scl, scl);
       }
     }
@@ -62,7 +65,10 @@ class Sketch extends Engine {
   _drawTexture() {
     this.ctx.save();
     this.ctx.translate(this.width / 2, this.height / 2);
-    this.ctx.rotate(Math.floor(Math.random() * 4) * (Math.PI / 2));
+
+    const theta = this._random.random_int(4) * (Math.PI / 2);
+    this.ctx.rotate(theta);
+
     this.ctx.translate(-this.width / 2, -this.height / 2);
 
     this.ctx.save();
@@ -82,7 +88,7 @@ class Sketch extends Engine {
     const title_height = Math.floor(partition.size / 10);
     const subtitle_height = Math.floor(title_height * 0.3);
 
-    const replicas = Math.floor(Math.random() * 3 + 4);
+    const replicas = this._random.random_int(3, 7);
 
     // draw title
     this.ctx.save();

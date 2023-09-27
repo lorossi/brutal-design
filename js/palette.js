@@ -22,8 +22,8 @@ const PALETTES = [
 ];
 
 class PaletteFactory {
-  static random() {
-    return PALETTES[Math.floor(Math.random() * PALETTES.length)];
+  static randomPalette(random) {
+    return random.random_from_array(PALETTES);
   }
 }
 
