@@ -6,7 +6,7 @@ import { PaletteFactory } from "./palette.js";
 class Sketch extends Engine {
   preload() {
     this._scl = 0.95; // size of the image in the canvas
-    this._noise_scl = 0.0075; // noise scale for the background texture
+    this._noise_scl = 0.0025; // noise scale for the background texture
     this._texture_scl = 4; // size of the background texture
     this._font = "VioletSans"; // font used for the text
   }
@@ -16,9 +16,7 @@ class Sketch extends Engine {
     // initialize random number generator and noise
     this._random = new XOR128(this._timestamp);
     this._noise = new SimplexNoise(this._timestamp);
-    this._noise.setDetail(3, 0.5);
-    // create the background texture
-    this._createTexture();
+    this._noise.setDetail(3, 0.75);
     // select a random palette
     this._palette = PaletteFactory.randomPalette(this._random);
     // create the partition
@@ -47,7 +45,7 @@ class Sketch extends Engine {
 
     this.ctx.scale(this._scl, this._scl);
     this.ctx.translate(-this.width / 2, -this.height / 2);
-    // draw the partition
+    // draw the top partition, all other partitions are drawn recursively
     this._partition.show(this.ctx);
     // draw the text on the biggest empty child
     const biggest = this._partition.biggestEmptyChild();
@@ -57,39 +55,24 @@ class Sketch extends Engine {
     this._drawTexture();
   }
 
-  _createTexture() {
-    // create a new canvas to speed up the drawing
-    this._dark_texture = document.createElement("canvas");
-    this._dark_texture.width = this.width;
-    this._dark_texture.height = this.height;
+  _drawTexture() {
+    // draw a noise texture on top of the canvas
+    this.ctx.save();
+    // random rotation
+    this.ctx.translate(this.width / 2, this.height / 2);
+    this.ctx.rotate(this._random.random_int(4) * (Math.PI / 2));
+    this.ctx.translate(-this.width / 2, -this.height / 2);
 
-    const ctx = this._dark_texture.getContext("2d");
-    // draw background
+    this.ctx.globalCompositeOperation = "multiply";
+
     for (let x = 0; x < this.width; x += this._texture_scl) {
       for (let y = 0; y < this.height; y += this._texture_scl) {
         const n = this._noise.noise(x * this._noise_scl, y * this._noise_scl);
         const ch = this._polyEaseInOut((n + 1) / 2, 2) * 255;
-        ctx.fillStyle = `rgba(${ch}, ${ch}, ${ch}, 0.15)`;
-        ctx.fillRect(x, y, this._texture_scl, this._texture_scl);
+        this.ctx.fillStyle = `rgba(${ch}, ${ch}, ${ch}, 0.25)`;
+        this.ctx.fillRect(x, y, this._texture_scl, this._texture_scl);
       }
     }
-  }
-
-  _drawTexture() {
-    this.ctx.save();
-    this.ctx.translate(this.width / 2, this.height / 2);
-
-    // random rotation of the texture
-    const theta = this._random.random_int(4) * (Math.PI / 2);
-    this.ctx.rotate(theta);
-
-    this.ctx.translate(-this.width / 2, -this.height / 2);
-
-    this.ctx.save();
-    // paste the texture
-    this.ctx.globalCompositeOperation = "multiply";
-    this.ctx.drawImage(this._dark_texture, 0, 0);
-    this.ctx.restore();
 
     this.ctx.restore();
   }
