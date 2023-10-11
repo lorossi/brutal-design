@@ -6,7 +6,7 @@ import { PaletteFactory } from "./palette.js";
 class Sketch extends Engine {
   preload() {
     this._scl = 0.95;
-    this._noise_scl = 0.01;
+    this._noise_scl = 0.0075;
     this._texture_scl = 4;
     this._font = "VioletSans";
   }
@@ -56,14 +56,12 @@ class Sketch extends Engine {
     this._dark_texture.height = this.height;
 
     const ctx = this._dark_texture.getContext("2d");
-    ctx.globalCompositeOperation = "multiply";
-
     // draw background
     for (let x = 0; x < this.width; x += this._texture_scl) {
       for (let y = 0; y < this.height; y += this._texture_scl) {
         const n = this._noise.noise(x * this._noise_scl, y * this._noise_scl);
         const ch = this._polyEaseInOut((n + 1) / 2, 2) * 255;
-        ctx.fillStyle = `rgba(${ch}, ${ch}, ${ch}, 0.1)`;
+        ctx.fillStyle = `rgba(${ch}, ${ch}, ${ch}, 0.15)`;
         ctx.fillRect(x, y, this._texture_scl, this._texture_scl);
       }
     }
