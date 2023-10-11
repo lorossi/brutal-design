@@ -1,17 +1,24 @@
-import { Engine } from "./engine.js";
+import { Engine, SimplexNoise } from "./engine.js";
 import { XOR128 } from "./xor128.js";
 import { Partition } from "./partition.js";
 import { PaletteFactory } from "./palette.js";
 
 class Sketch extends Engine {
+  preload() {
+    this._scl = 0.95;
+    this._noise_scl = 0.01;
+    this._texture_scl = 4;
+    this._font = "VioletSans";
+  }
+
   setup() {
     this._timestamp = new Date().getTime();
     this._random = new XOR128(this._timestamp);
+    this._noise = new SimplexNoise(this._timestamp);
+    this._noise.setDetail(3, 0.5);
     this._createTexture();
 
     this._palette = PaletteFactory.randomPalette(this._random);
-    this._scl = 0.95;
-    this._font = "VioletSans";
 
     this._partition = new Partition(0, 0, this.width, this._random);
     this._partition.setColors(
@@ -49,15 +56,15 @@ class Sketch extends Engine {
     this._dark_texture.height = this.height;
 
     const ctx = this._dark_texture.getContext("2d");
-
-    const scl = 3;
+    ctx.globalCompositeOperation = "multiply";
 
     // draw background
-    for (let x = 0; x < this.width; x += scl) {
-      for (let y = 0; y < this.height; y += scl) {
-        const c = this._random.random_int(127);
-        ctx.fillStyle = `rgba(${c}, ${c}, ${c}, 0.1)`;
-        ctx.fillRect(x, y, scl, scl);
+    for (let x = 0; x < this.width; x += this._texture_scl) {
+      for (let y = 0; y < this.height; y += this._texture_scl) {
+        const n = this._noise.noise(x * this._noise_scl, y * this._noise_scl);
+        const ch = this._polyEaseInOut((n + 1) / 2, 2) * 255;
+        ctx.fillStyle = `rgba(${ch}, ${ch}, ${ch}, 0.1)`;
+        ctx.fillRect(x, y, this._texture_scl, this._texture_scl);
       }
     }
   }
@@ -72,7 +79,7 @@ class Sketch extends Engine {
     this.ctx.translate(-this.width / 2, -this.height / 2);
 
     this.ctx.save();
-    this.ctx.globalCompositeOperation = "darken";
+    this.ctx.globalCompositeOperation = "multiply";
     this.ctx.drawImage(this._dark_texture, 0, 0);
     this.ctx.restore();
 
@@ -133,6 +140,11 @@ class Sketch extends Engine {
 
   _setPageBackground(color) {
     document.body.style.backgroundColor = color;
+  }
+
+  _polyEaseInOut(x, n = 3) {
+    if (x < 0.5) return Math.pow(x * 2, n) / 2;
+    return 1 - Math.pow(2 - x * 2, n) / 2;
   }
 
   click() {
