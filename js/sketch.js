@@ -5,52 +5,60 @@ import { PaletteFactory } from "./palette.js";
 
 class Sketch extends Engine {
   preload() {
-    this._scl = 0.95;
-    this._noise_scl = 0.0075;
-    this._texture_scl = 4;
-    this._font = "VioletSans";
+    this._scl = 0.95; // size of the image in the canvas
+    this._noise_scl = 0.0075; // noise scale for the background texture
+    this._texture_scl = 4; // size of the background texture
+    this._font = "VioletSans"; // font used for the text
   }
 
   setup() {
     this._timestamp = new Date().getTime();
+    // initialize random number generator and noise
     this._random = new XOR128(this._timestamp);
     this._noise = new SimplexNoise(this._timestamp);
     this._noise.setDetail(3, 0.5);
+    // create the background texture
     this._createTexture();
-
+    // select a random palette
     this._palette = PaletteFactory.randomPalette(this._random);
-
+    // create the partition
     this._partition = new Partition(0, 0, this.width, this._random);
     this._partition.setColors(
       this._palette.background,
       this._palette.foreground
     );
+    // start partitioning, automatically stops when the partition is too small
     this._partition.split();
   }
 
   draw() {
+    this.noLoop();
+
     this.ctx.save();
     this.background(this._palette.background);
+    // set the page (body) background color
     this._setPageBackground(this._palette.background);
 
     this.ctx.translate(this.width / 2, this.height / 2);
 
+    // random rotation
     const theta = this._random.random_int(4) * (Math.PI / 2);
     this.ctx.rotate(theta);
 
     this.ctx.scale(this._scl, this._scl);
     this.ctx.translate(-this.width / 2, -this.height / 2);
+    // draw the partition
     this._partition.show(this.ctx);
+    // draw the text on the biggest empty child
     const biggest = this._partition.biggestEmptyChild();
     this._drawText(biggest);
     this.ctx.restore();
-
+    // draw the background texture
     this._drawTexture();
-
-    this.noLoop();
   }
 
   _createTexture() {
+    // create a new canvas to speed up the drawing
     this._dark_texture = document.createElement("canvas");
     this._dark_texture.width = this.width;
     this._dark_texture.height = this.height;
@@ -71,12 +79,14 @@ class Sketch extends Engine {
     this.ctx.save();
     this.ctx.translate(this.width / 2, this.height / 2);
 
+    // random rotation of the texture
     const theta = this._random.random_int(4) * (Math.PI / 2);
     this.ctx.rotate(theta);
 
     this.ctx.translate(-this.width / 2, -this.height / 2);
 
     this.ctx.save();
+    // paste the texture
     this.ctx.globalCompositeOperation = "multiply";
     this.ctx.drawImage(this._dark_texture, 0, 0);
     this.ctx.restore();
@@ -99,10 +109,12 @@ class Sketch extends Engine {
     this.ctx.save();
     this.ctx.translate(partition.border * 4, partition.border * 4);
 
+    // setup the text style
     this.ctx.fillStyle = this._palette.background;
     this.ctx.strokeStyle = this._palette.background;
     this.ctx.font = `bold ${title_height}px ${this._font}`;
 
+    // make a few replicas of the title
     for (let i = 0; i < replicas; i++) {
       this.ctx.save();
       this.ctx.textAlign = "left";
@@ -110,6 +122,7 @@ class Sketch extends Engine {
       this.ctx.translate(0, i * title_height * 0.25);
       this.ctx.rotate(partition.rotation);
 
+      // the first replica is filled, the others are stroked
       if (i == replicas - 1) this.ctx.fillText(title, partition.x, partition.y);
       else this.ctx.strokeText(title, partition.x, partition.y);
 
@@ -118,12 +131,13 @@ class Sketch extends Engine {
 
     this.ctx.restore();
 
-    // draw subtitle
     this.ctx.save();
+    // setup the text style
     this.ctx.fillStyle = this._palette.background;
     this.ctx.font = `bold ${subtitle_height}px ${this._font}`;
     this.ctx.textAlign = "right";
     this.ctx.textBaseline = "bottom";
+    // draw subtitle
     this.ctx.translate(
       partition.x + partition.size - partition.border * 2,
       partition.y + partition.size - partition.border * 2
@@ -141,16 +155,19 @@ class Sketch extends Engine {
   }
 
   _polyEaseInOut(x, n = 3) {
+    // polynomial ease in out
     if (x < 0.5) return Math.pow(x * 2, n) / 2;
     return 1 - Math.pow(2 - x * 2, n) / 2;
   }
 
   click() {
+    // on click, create a new canvas
     this.setup();
     this.draw();
   }
 
   keyPress(_, c) {
+    // on enter, save the current canvas
     switch (c) {
       case 13: // enter
         const filename = `brutal-design-${this._timestamp}.png`;
