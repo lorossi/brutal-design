@@ -17,7 +17,7 @@
 
 ## Description
 
-This project is a procedural design generator. TODO
+I like brutalist design and I like generative art, so I decided to combine the two.
 
 ## Credits
 
@@ -30,5 +30,5 @@ Font [Roboto](https://fonts.google.com/specimen/Roboto), made by Google, is pack
 
 [JSzip](https://stuk.github.io/jszip/) library, made by [Stuart Knightley](https://github.com/Stuk), is packaged in this repository.
 
-[simplex-noise.js](https://github.com/jwagner/simplex-noise.js) slightly, made by [Jonathan Wagner](https://github.com/jwagner), is packaged in this repository.
+[simplex-noise.js](https://github.com/jwagner/simplex-noise.js), made by [Jonathan Wagner](https://github.com/jwagner), is packaged in this repository.
 I have made some small changes to the original version.
