@@ -12,7 +12,8 @@
   margin: 0;
   padding: 0;
   overflow: hidden;
-  font-family: Roboto;
+  font-family: VioletSans;
+  font-weight: bold;
 }
 
 body {
@@ -28,7 +29,7 @@ a {
 
 a:visited,
 a:active {
-  color: var(--visited-link-color);
+  color: var(--text-color);
 }
 
 .container {
